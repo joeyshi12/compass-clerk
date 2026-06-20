@@ -20,8 +20,26 @@ emails it to a configured address, and archives a copy to Drive.
 Everything else (suffixed with `_`) is an internal helper - do not run directly.
 
 ## Configuration
-Edit the `CONFIG` block at the top of `CompassClerk.js` (Gmail label,
-recipient address, identity, card masking, poll interval).
+Configuration is split so the code stays generic and open-sourceable:
+
+- **Non-personal defaults** live in the `DEFAULTS` block at the top of
+  `CompassClerk.js` (Gmail label, Drive folder, `SEND_EMAIL`, card masking,
+  poll interval). Edit these in code as you like.
+- **Personal values** are read from **Script Properties** at runtime and never
+  belong in the repo:
+  - `NAME` - name printed on the receipt
+  - `ADDRESS_HTML` - billing/shipping address (HTML, use `<br>` for line breaks)
+  - `EMAIL_TO` - recipient address when `SEND_EMAIL` is true
+
+Set the personal values once in the Apps Script editor:
+**Project Settings (gear icon) -> Script Properties -> Add script property**.
+Any `DEFAULTS` key can also be overridden by adding a Script Property with the
+same name (e.g. `POLL_MINUTES` = `5`, or `SEND_EMAIL` = `false`).
+
+Because the private config lives in Script Properties (in the cloud project),
+`clasp push` only ever deploys the generic code -- your personal values are
+never overwritten and never committed. Running `setup()` logs a reminder if any
+required property is missing.
 
 ## Version-control workflow (clasp + git)
 One-time setup:
@@ -31,6 +49,7 @@ clasp login                          # browser OAuth (one time)
 # put your real Script ID in .clasp.json
 #   (Apps Script editor -> Project Settings -> IDs)
 clasp push -f                        # push this local code to the cloud project
+# then set NAME / ADDRESS_HTML / EMAIL_TO in Project Settings -> Script Properties
 ```
 
 Daily loop:

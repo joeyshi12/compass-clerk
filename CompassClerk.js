@@ -20,44 +20,59 @@
  */
 
 // ===================== CONFIG =====================
-var CONFIG = {
-  // Label your Gmail filter applies to Compass receipts. Leave "" to instead
-  // search by sender (SENDER below).
-  GMAIL_LABEL: "Compass Orders",
-
-  // Fallback search if GMAIL_LABEL is "".
-  SENDER: "customerservice@compasscard.ca",
-
-  // Drive folder to archive a copy of every PDF (created if missing).
-  DRIVE_FOLDER: "Compass Receipts",
-
-  // Email the clean PDF to EMAIL_TO?
-  //   true  = email each PDF (use this to REPLACE a Gmail forward -- then turn
-  //           that forward OFF so you don't get duplicates).
-  //   false = Drive-only; don't email (e.g. keep your existing Gmail forward).
-  // A copy is always archived to DRIVE_FOLDER regardless of this setting.
-  SEND_EMAIL: true,
-  EMAIL_TO: "you@example.com",
-
-  // Billing/shipping identity printed on the receipt.
-  NAME: "Your Name",
-  ADDRESS_HTML: "123 Example St<br>City Prov A1A 1A1<br>Canada",
-
-  // Mask the Compass card serial (show only last 4)? Enabled: the serial adds
-  // no value for reimbursement and is an account/travel-history identifier.
-  MASK_CARD: true,
-
-  // Label added to threads once handled, so they're never processed twice.
-  PROCESSED_LABEL: "Compass/Processed",
-
-  // How often the time trigger runs. Allowed: 1, 5, 10, 15, or 30 (minutes).
-  // Lower = more responsive. Hourly is plenty for receipts; 15 feels "instant".
-  POLL_MINUTES: 15
+// Non-personal defaults live here in code (safe to open-source). PERSONAL
+// values (NAME, ADDRESS_HTML, EMAIL_TO) are read from Script Properties at
+// runtime, so they NEVER live in this repo or in pushed code.
+//
+// Set them once in the Apps Script editor:
+//   Project Settings (gear icon) -> Script Properties -> add:
+//     NAME          = Your Name
+//     ADDRESS_HTML  = 123 Example St<br>City Prov A1A 1A1<br>Canada
+//     EMAIL_TO      = you@example.com
+//
+// Any default below can be overridden the same way (e.g. add a Script
+// Property POLL_MINUTES = 5). `clasp push` deploys the generic code; your
+// Script Properties stay put, so code and private config are fully decoupled.
+var DEFAULTS = {
+  GMAIL_LABEL: "Compass Orders",            // label your Gmail filter applies
+  SENDER: "customerservice@compasscard.ca", // fallback search if GMAIL_LABEL is ""
+  DRIVE_FOLDER: "Compass Receipts",         // Drive folder to archive PDFs
+  SEND_EMAIL: true,                         // true = email PDF; false = Drive-only
+  EMAIL_TO: "",                             // PERSONAL - set via Script Property
+  NAME: "",                                 // PERSONAL - set via Script Property
+  ADDRESS_HTML: "",                         // PERSONAL - set via Script Property
+  MASK_CARD: true,                          // show only last 4 of the card serial
+  PROCESSED_LABEL: "Compass/Processed",     // label marking handled threads
+  POLL_MINUTES: 15                          // trigger interval: 1, 5, 10, 15, or 30
 };
+
+// Effective config = defaults overlaid with any matching Script Properties.
+var CONFIG = buildConfig_();
+
+function buildConfig_() {
+  var props = PropertiesService.getScriptProperties().getProperties();
+  var c = {};
+  Object.keys(DEFAULTS).forEach(function (k) {
+    var v = props[k];
+    if (v === undefined || v === "") { c[k] = DEFAULTS[k]; return; }
+    if (typeof DEFAULTS[k] === "boolean") c[k] = (String(v).toLowerCase() === "true");
+    else if (typeof DEFAULTS[k] === "number") c[k] = Number(v);
+    else c[k] = v;
+  });
+  return c;
+}
 // ==================================================
 
 /** Create the hourly trigger. Run once. */
 function setup() {
+  var missing = [];
+  if (!CONFIG.NAME) missing.push("NAME");
+  if (!CONFIG.ADDRESS_HTML) missing.push("ADDRESS_HTML");
+  if (CONFIG.SEND_EMAIL && !CONFIG.EMAIL_TO) missing.push("EMAIL_TO");
+  if (missing.length) {
+    Logger.log("Set these in Project Settings -> Script Properties before use: " +
+               missing.join(", "));
+  }
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === "processReceipts") ScriptApp.deleteTrigger(t);
   });
