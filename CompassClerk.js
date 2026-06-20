@@ -9,7 +9,7 @@
  * SETUP (one time):
  *   1. Go to https://script.google.com  ->  New project.
  *   2. Paste this whole file in, replacing the default Code.gs contents.
- *   3. Edit the CONFIG block below.
+ *   3. Add a config.js file (copy config.example.js) and fill in your values.
  *   4. Run `setup` once (Run menu). Approve the permission prompts.
  *      This creates an hourly trigger.
  *   5. Done. Run `processReceipts` manually any time to test.
@@ -20,31 +20,9 @@
  */
 
 // ===================== CONFIG =====================
-// Non-personal defaults. Personal values come from an untracked
-// config.local.js (see README).
-var DEFAULTS = {
-  GMAIL_LABEL: "Compass Orders",
-  SENDER: "customerservice@compasscard.ca",
-  DRIVE_FOLDER: "Compass Receipts",
-  SEND_EMAIL: true,                     // false = archive to Drive only
-  MASK_CARD: true,
-  PROCESSED_LABEL: "Compass/Processed",
-  POLL_MINUTES: 15                      // 1, 5, 10, 15, or 30
-};
-var PERSONAL_KEYS = ["NAME", "ADDRESS_HTML", "EMAIL_TO"];
-
-var CONFIG = buildConfig_();
-
-// Effective config: DEFAULTS overlaid with values from config.local.js.
-function buildConfig_() {
-  var c = {}, allowed = Object.keys(DEFAULTS).concat(PERSONAL_KEYS);
-  Object.keys(DEFAULTS).forEach(function (k) { c[k] = DEFAULTS[k]; });
-  PERSONAL_KEYS.forEach(function (k) { c[k] = ""; });
-  if (typeof LOCAL_CONFIG !== "undefined") {
-    allowed.forEach(function (k) { if (LOCAL_CONFIG[k] !== undefined) c[k] = LOCAL_CONFIG[k]; });
-  }
-  return c;
-}
+// All configuration lives in config.js (git-ignored, copied from
+// config.example.js). That file defines the global `CONFIG` object used
+// throughout this script. See README.
 // ==================================================
 
 /** Create the hourly trigger. Run once. */
@@ -54,7 +32,7 @@ function setup() {
   if (!CONFIG.ADDRESS_HTML) missing.push("ADDRESS_HTML");
   if (CONFIG.SEND_EMAIL && !CONFIG.EMAIL_TO) missing.push("EMAIL_TO");
   if (missing.length) {
-    Logger.log("Set these in config.local.js before use: " +
+    Logger.log("Set these in config.js before use: " +
                missing.join(", "));
   }
   ScriptApp.getProjectTriggers().forEach(function (t) {

@@ -7,6 +7,8 @@ emails it to a configured address, and archives a copy to Drive.
 
 ## Files
 - `CompassClerk.js` - the Apps Script source (deployed as `CompassClerk.gs`).
+- `config.js` - all configuration (git-ignored, copied from `config.example.js`).
+- `config.example.js` - template config; copy to `config.js` and fill in.
 - `appsscript.json` - Apps Script manifest (timezone, runtime).
 - `.clasp.json` - links this folder to the cloud Apps Script project (set `scriptId`).
 
@@ -20,13 +22,12 @@ emails it to a configured address, and archives a copy to Drive.
 Everything else (suffixed with `_`) is an internal helper - do not run directly.
 
 ## Configuration
-Non-personal defaults are in the `DEFAULTS` block of `CompassClerk.js`.
-Personal values (`NAME`, `ADDRESS_HTML`, `EMAIL_TO`) are kept out of the repo
-in an untracked `config.local.js`:
+All configuration lives in a single `config.js`, kept out of the repo:
 
-- `cp config.local.example.js config.local.js`, fill it in, `clasp push`.
+- `cp config.example.js config.js`, fill it in, `clasp push`.
   It's git-ignored but pushed by clasp.
-- Any `DEFAULTS` key can be overridden by adding it to `config.local.js` too.
+- `config.js` defines the global `CONFIG` object the script reads; edit any
+  value there.
 
 `setup()` logs a reminder if a required value is missing.
 
@@ -37,8 +38,8 @@ npm install -g @google/clasp
 clasp login                          # browser OAuth (one time)
 # set your Script ID in .clasp.json (editor -> Project Settings -> IDs)
 cp .clasp.example.json .clasp.json           # then set your Script ID
-cp config.local.example.js config.local.js   # fill in your values
-clasp push -f                        # deploy code + config.local.js
+cp config.example.js config.js               # fill in your values
+clasp push -f                        # deploy code + config.js
 ```
 
 Daily loop:
@@ -58,4 +59,4 @@ clasp pull
 - `clasp` stores OAuth credentials in `~/.clasprc.json` (your home dir, not this
   repo). It is git-ignored here as a safeguard - never commit it.
 - `.claspignore` limits `clasp push` to `CompassClerk.js`, `appsscript.json`,
-  and `config.local.js`.
+  and `config.js`.

@@ -6,7 +6,7 @@
 .clasp.json
 
 # Personal config (pushed by clasp, never committed)
-config.local.js
+config.js
 
 # Node
 node_modules/
