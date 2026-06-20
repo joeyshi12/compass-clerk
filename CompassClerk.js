@@ -20,46 +20,38 @@
  */
 
 // ===================== CONFIG =====================
-// Non-personal defaults live here in code (safe to open-source). PERSONAL
-// values (NAME, ADDRESS_HTML, EMAIL_TO) are read from Script Properties at
-// runtime, so they NEVER live in this repo or in pushed code.
-//
-// Set them once in the Apps Script editor:
-//   Project Settings (gear icon) -> Script Properties -> add:
-//     NAME          = Your Name
-//     ADDRESS_HTML  = 123 Example St<br>City Prov A1A 1A1<br>Canada
-//     EMAIL_TO      = you@example.com
-//
-// Any default below can be overridden the same way (e.g. add a Script
-// Property POLL_MINUTES = 5). `clasp push` deploys the generic code; your
-// Script Properties stay put, so code and private config are fully decoupled.
+// Non-personal defaults. Personal values come from Script Properties or an
+// untracked config.local.js (see README).
 var DEFAULTS = {
-  GMAIL_LABEL: "Compass Orders",            // label your Gmail filter applies
-  SENDER: "customerservice@compasscard.ca", // fallback search if GMAIL_LABEL is ""
-  DRIVE_FOLDER: "Compass Receipts",         // Drive folder to archive PDFs
-  SEND_EMAIL: true,                         // true = email PDF; false = Drive-only
-  EMAIL_TO: "",                             // PERSONAL - set via Script Property
-  NAME: "",                                 // PERSONAL - set via Script Property
-  ADDRESS_HTML: "",                         // PERSONAL - set via Script Property
-  MASK_CARD: true,                          // show only last 4 of the card serial
-  PROCESSED_LABEL: "Compass/Processed",     // label marking handled threads
-  POLL_MINUTES: 15                          // trigger interval: 1, 5, 10, 15, or 30
+  GMAIL_LABEL: "Compass Orders",
+  SENDER: "customerservice@compasscard.ca",
+  DRIVE_FOLDER: "Compass Receipts",
+  SEND_EMAIL: true,                     // false = archive to Drive only
+  MASK_CARD: true,
+  PROCESSED_LABEL: "Compass/Processed",
+  POLL_MINUTES: 15                      // 1, 5, 10, 15, or 30
 };
+var PERSONAL_KEYS = ["NAME", "ADDRESS_HTML", "EMAIL_TO"];
 
-// Effective config = defaults overlaid with any matching Script Properties.
 var CONFIG = buildConfig_();
 
+// Effective config: DEFAULTS, then Script Properties, then config.local.js.
 function buildConfig_() {
+  var c = {}, allowed = Object.keys(DEFAULTS).concat(PERSONAL_KEYS);
+  Object.keys(DEFAULTS).forEach(function (k) { c[k] = DEFAULTS[k]; });
+  PERSONAL_KEYS.forEach(function (k) { c[k] = ""; });
   var props = PropertiesService.getScriptProperties().getProperties();
-  var c = {};
-  Object.keys(DEFAULTS).forEach(function (k) {
-    var v = props[k];
-    if (v === undefined || v === "") { c[k] = DEFAULTS[k]; return; }
-    if (typeof DEFAULTS[k] === "boolean") c[k] = (String(v).toLowerCase() === "true");
-    else if (typeof DEFAULTS[k] === "number") c[k] = Number(v);
-    else c[k] = v;
-  });
+  allowed.forEach(function (k) { if (props[k]) c[k] = coerce_(props[k], DEFAULTS[k]); });
+  if (typeof LOCAL_CONFIG !== "undefined") {
+    allowed.forEach(function (k) { if (LOCAL_CONFIG[k] !== undefined) c[k] = LOCAL_CONFIG[k]; });
+  }
   return c;
+}
+
+function coerce_(v, ref) {
+  if (typeof ref === "boolean") return String(v).toLowerCase() === "true";
+  if (typeof ref === "number") return Number(v);
+  return v;
 }
 // ==================================================
 

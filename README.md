@@ -20,36 +20,25 @@ emails it to a configured address, and archives a copy to Drive.
 Everything else (suffixed with `_`) is an internal helper - do not run directly.
 
 ## Configuration
-Configuration is split so the code stays generic and open-sourceable:
+Non-personal defaults are in the `DEFAULTS` block of `CompassClerk.js`.
+Personal values (`NAME`, `ADDRESS_HTML`, `EMAIL_TO`) are kept out of the repo
+and supplied either way:
 
-- **Non-personal defaults** live in the `DEFAULTS` block at the top of
-  `CompassClerk.js` (Gmail label, Drive folder, `SEND_EMAIL`, card masking,
-  poll interval). Edit these in code as you like.
-- **Personal values** are read from **Script Properties** at runtime and never
-  belong in the repo:
-  - `NAME` - name printed on the receipt
-  - `ADDRESS_HTML` - billing/shipping address (HTML, use `<br>` for line breaks)
-  - `EMAIL_TO` - recipient address when `SEND_EMAIL` is true
+- **Local file (automated):** `cp config.local.example.js config.local.js`,
+  fill it in, `clasp push`. It's git-ignored but pushed by clasp.
+- **Script Properties (manual):** Project Settings -> Script Properties -> add
+  the keys. Any `DEFAULTS` key can be overridden here too.
 
-Set the personal values once in the Apps Script editor:
-**Project Settings (gear icon) -> Script Properties -> Add script property**.
-Any `DEFAULTS` key can also be overridden by adding a Script Property with the
-same name (e.g. `POLL_MINUTES` = `5`, or `SEND_EMAIL` = `false`).
-
-Because the private config lives in Script Properties (in the cloud project),
-`clasp push` only ever deploys the generic code -- your personal values are
-never overwritten and never committed. Running `setup()` logs a reminder if any
-required property is missing.
+`setup()` logs a reminder if a required value is missing.
 
 ## Version-control workflow (clasp + git)
 One-time setup:
 ```bash
 npm install -g @google/clasp
 clasp login                          # browser OAuth (one time)
-# put your real Script ID in .clasp.json
-#   (Apps Script editor -> Project Settings -> IDs)
-clasp push -f                        # push this local code to the cloud project
-# then set NAME / ADDRESS_HTML / EMAIL_TO in Project Settings -> Script Properties
+# set your Script ID in .clasp.json (editor -> Project Settings -> IDs)
+cp config.local.example.js config.local.js   # fill in your values
+clasp push -f                        # deploy code + config.local.js
 ```
 
 Daily loop:
@@ -68,5 +57,5 @@ clasp pull
 ## Notes
 - `clasp` stores OAuth credentials in `~/.clasprc.json` (your home dir, not this
   repo). It is git-ignored here as a safeguard - never commit it.
-- `clasp` only pushes script files (`.js`, `.html`) and `appsscript.json`;
-  `README.md` and other files are ignored by `clasp push`.
+- `.claspignore` limits `clasp push` to `CompassClerk.js`, `appsscript.json`,
+  and `config.local.js`.

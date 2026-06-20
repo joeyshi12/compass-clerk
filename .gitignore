@@ -2,6 +2,9 @@
 .clasprc.json
 *.clasprc.json
 
+# Personal config (pushed by clasp, never committed)
+config.local.js
+
 # Node
 node_modules/
 npm-debug.log*
