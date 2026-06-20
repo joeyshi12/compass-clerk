@@ -3,20 +3,11 @@
  * ----------------------------------------------------------------------------
  * Runs in Gmail's cloud on a time trigger. For every new Compass Card order
  * receipt it finds, it parses the order details, renders a clean one-page PDF,
- * emails the PDF to EMAIL_TO (replacing your Gmail forward), and archives a
- * copy to a Drive folder.
+ * emails the PDF, and archives a copy to a Drive folder.
  *
- * SETUP (one time):
- *   1. Go to https://script.google.com  ->  New project.
- *   2. Paste this whole file in, replacing the default Code.gs contents.
- *   3. Add a config.js file (copy config.example.js) and fill in your values.
- *   4. Run `setup` once (Run menu). Approve the permission prompts.
- *      This creates an hourly trigger.
- *   5. Done. Run `processReceipts` manually any time to test.
- *
- * Pair it with your existing Gmail filter: have the filter apply a label
- * (e.g. "Compass") and set GMAIL_LABEL below to match. The script only looks
- * at labeled, unprocessed threads.
+ * Configuration lives in config.js (see README). Run `setup` once to install
+ * the trigger; `processReceipts` is the trigger target and is safe to run
+ * manually.
  */
 
 // ===================== CONFIG =====================

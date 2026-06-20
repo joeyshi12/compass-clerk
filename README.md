@@ -6,7 +6,7 @@ finds newly labeled receipts, parses the order details, renders a clean PDF,
 emails it to a configured address, and archives a copy to Drive.
 
 ## Files
-- `CompassClerk.js` - the Apps Script source (deployed as `CompassClerk.gs`).
+- `compass-clerk.js` - the Apps Script source (deployed as `compass-clerk.gs`).
 - `config.js` - all configuration (git-ignored, copied from `config.example.js`).
 - `config.example.js` - template config; copy to `config.js` and fill in.
 - `appsscript.json` - Apps Script manifest (timezone, runtime).
@@ -44,7 +44,7 @@ clasp push -f                        # deploy code + config.js
 
 Daily loop:
 ```bash
-# edit CompassClerk.js locally
+# edit compass-clerk.js locally
 git add -A && git commit -m "..."
 clasp push                           # deploy to Apps Script
 git push                             # publish to GitHub
@@ -58,5 +58,5 @@ clasp pull
 ## Notes
 - `clasp` stores OAuth credentials in `~/.clasprc.json` (your home dir, not this
   repo). It is git-ignored here as a safeguard - never commit it.
-- `.claspignore` limits `clasp push` to `CompassClerk.js`, `appsscript.json`,
+- `.claspignore` limits `clasp push` to `compass-clerk.js`, `appsscript.json`,
   and `config.js`.
