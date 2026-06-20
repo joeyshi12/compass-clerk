@@ -2,6 +2,9 @@
 .clasprc.json
 *.clasprc.json
 
+# clasp project link (contains your Script ID)
+.clasp.json
+
 # Personal config (pushed by clasp, never committed)
 config.local.js
 

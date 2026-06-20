@@ -37,6 +37,7 @@ One-time setup:
 npm install -g @google/clasp
 clasp login                          # browser OAuth (one time)
 # set your Script ID in .clasp.json (editor -> Project Settings -> IDs)
+cp .clasp.example.json .clasp.json           # then set your Script ID
 cp config.local.example.js config.local.js   # fill in your values
 clasp push -f                        # deploy code + config.local.js
 ```
