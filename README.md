@@ -22,12 +22,11 @@ Everything else (suffixed with `_`) is an internal helper - do not run directly.
 ## Configuration
 Non-personal defaults are in the `DEFAULTS` block of `CompassClerk.js`.
 Personal values (`NAME`, `ADDRESS_HTML`, `EMAIL_TO`) are kept out of the repo
-and supplied either way:
+in an untracked `config.local.js`:
 
-- **Local file (automated):** `cp config.local.example.js config.local.js`,
-  fill it in, `clasp push`. It's git-ignored but pushed by clasp.
-- **Script Properties (manual):** Project Settings -> Script Properties -> add
-  the keys. Any `DEFAULTS` key can be overridden here too.
+- `cp config.local.example.js config.local.js`, fill it in, `clasp push`.
+  It's git-ignored but pushed by clasp.
+- Any `DEFAULTS` key can be overridden by adding it to `config.local.js` too.
 
 `setup()` logs a reminder if a required value is missing.
 

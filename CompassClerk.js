@@ -20,8 +20,8 @@
  */
 
 // ===================== CONFIG =====================
-// Non-personal defaults. Personal values come from Script Properties or an
-// untracked config.local.js (see README).
+// Non-personal defaults. Personal values come from an untracked
+// config.local.js (see README).
 var DEFAULTS = {
   GMAIL_LABEL: "Compass Orders",
   SENDER: "customerservice@compasscard.ca",
@@ -35,23 +35,15 @@ var PERSONAL_KEYS = ["NAME", "ADDRESS_HTML", "EMAIL_TO"];
 
 var CONFIG = buildConfig_();
 
-// Effective config: DEFAULTS, then Script Properties, then config.local.js.
+// Effective config: DEFAULTS overlaid with values from config.local.js.
 function buildConfig_() {
   var c = {}, allowed = Object.keys(DEFAULTS).concat(PERSONAL_KEYS);
   Object.keys(DEFAULTS).forEach(function (k) { c[k] = DEFAULTS[k]; });
   PERSONAL_KEYS.forEach(function (k) { c[k] = ""; });
-  var props = PropertiesService.getScriptProperties().getProperties();
-  allowed.forEach(function (k) { if (props[k]) c[k] = coerce_(props[k], DEFAULTS[k]); });
   if (typeof LOCAL_CONFIG !== "undefined") {
     allowed.forEach(function (k) { if (LOCAL_CONFIG[k] !== undefined) c[k] = LOCAL_CONFIG[k]; });
   }
   return c;
-}
-
-function coerce_(v, ref) {
-  if (typeof ref === "boolean") return String(v).toLowerCase() === "true";
-  if (typeof ref === "number") return Number(v);
-  return v;
 }
 // ==================================================
 
@@ -62,7 +54,7 @@ function setup() {
   if (!CONFIG.ADDRESS_HTML) missing.push("ADDRESS_HTML");
   if (CONFIG.SEND_EMAIL && !CONFIG.EMAIL_TO) missing.push("EMAIL_TO");
   if (missing.length) {
-    Logger.log("Set these in Project Settings -> Script Properties before use: " +
+    Logger.log("Set these in config.local.js before use: " +
                missing.join(", "));
   }
   ScriptApp.getProjectTriggers().forEach(function (t) {
