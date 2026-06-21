@@ -5,13 +5,6 @@ into clean, single-page PDF receipts for reimbursement. On a time trigger it
 finds newly labeled receipts, parses the order details, renders a clean PDF,
 emails it to a configured address, and archives a copy to Drive.
 
-## Files
-- `compass-clerk.js` - the Apps Script source (deployed as `compass-clerk.gs`).
-- `config.js` - all configuration (git-ignored, copied from `config.example.js`).
-- `config.example.js` - template config; copy to `config.js` and fill in.
-- `appsscript.json` - Apps Script manifest (timezone, runtime).
-- `.clasp.json` - links this folder to the cloud Apps Script project (set `scriptId`).
-
 ## Run targets (functions you run from the editor)
 - `setup()` - run once: installs the time trigger, authorizes, does a first pass.
 - `processReceipts()` - the trigger target; safe to run manually.
@@ -42,7 +35,7 @@ cp config.example.js config.js               # fill in your values
 clasp push -f                        # deploy code + config.js
 ```
 
-Daily loop:
+Redeploy steps:
 ```bash
 # edit compass-clerk.js locally
 git add -A && git commit -m "..."
@@ -54,9 +47,3 @@ Pull changes made in the web editor back down:
 ```bash
 clasp pull
 ```
-
-## Notes
-- `clasp` stores OAuth credentials in `~/.clasprc.json` (your home dir, not this
-  repo). It is git-ignored here as a safeguard - never commit it.
-- `.claspignore` limits `clasp push` to `compass-clerk.js`, `appsscript.json`,
-  and `config.js`.
