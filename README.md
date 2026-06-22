@@ -1,9 +1,9 @@
 # Compass Clerk (Google Apps Script)
 
-A little clerk that turns your Compass Card order-receipt emails (in Gmail)
-into clean, single-page PDF receipts for reimbursement. On a time trigger it
-finds newly labeled receipts, parses the order details, renders a clean PDF,
-emails it to a configured address, and archives a copy to Drive.
+An apps script that turns your Compass Card order-receipt emails (in Gmail)
+into clean PDF receipts. On a time trigger it finds newly labeled receipts,
+parses the order details, renders a clean PDF, emails it to a configured address,
+and archives a copy to Drive.
 
 ## Run targets (functions you run from the editor)
 - `setup()` - run once: installs the time trigger, authorizes, does a first pass.
