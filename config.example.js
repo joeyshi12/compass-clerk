@@ -1,4 +1,4 @@
-// Copy to config.js (git-ignored, but pushed by clasp) and fill it in.
+// Copy to config.js (git-ignored) and fill it in.
 // config.js is the single source of truth for all config.
 var CONFIG = {
   NAME: "",

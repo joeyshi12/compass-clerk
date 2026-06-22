@@ -14,36 +14,23 @@ emails it to a configured address, and archives a copy to Drive.
 
 Everything else (suffixed with `_`) is an internal helper - do not run directly.
 
-## Configuration
-All configuration lives in a single `config.js`, kept out of the repo:
+## Setup
 
-- `cp config.example.js config.js`, fill it in, `clasp push`.
-  It's git-ignored but pushed by clasp.
-- `config.js` defines the global `CONFIG` object the script reads; edit any
-  value there.
+The simplest way to run this is to copy the scripts into the Apps Script
+web editor at <https://script.google.com>.
+
+1. Go to <https://script.google.com> and click **New project**.
+2. In the editor, recreate the files from this repo (use the **+** next to
+   "Files" to add each one):
+   - `compass-clerk.js` - paste in the contents of `compass-clerk.js`.
+   - `config.js` - create it from `config.example.js`, then fill in your
+     values (name, address, recipient email, etc.).
+   - The manifest `appsscript.json` - enable **Project Settings ->
+     "Show appsscript.json manifest file in editor"**, then replace its
+     contents with `appsscript.json` from this repo.
+3. Save the project.
+4. Select `setup` from the function dropdown and click **Run**. Approve the
+   authorization prompt when Google asks. This installs the time trigger and
+   does a first pass.
 
 `setup()` logs a reminder if a required value is missing.
-
-## Version-control workflow (clasp + git)
-One-time setup:
-```bash
-npm install -g @google/clasp
-clasp login                          # browser OAuth (one time)
-# set your Script ID in .clasp.json (editor -> Project Settings -> IDs)
-cp .clasp.example.json .clasp.json           # then set your Script ID
-cp config.example.js config.js               # fill in your values
-clasp push -f                        # deploy code + config.js
-```
-
-Redeploy steps:
-```bash
-# edit compass-clerk.js locally
-git add -A && git commit -m "..."
-clasp push                           # deploy to Apps Script
-git push                             # publish to GitHub
-```
-
-Pull changes made in the web editor back down:
-```bash
-clasp pull
-```

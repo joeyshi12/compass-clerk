@@ -1,5 +1,0 @@
-# Push only the script, manifest, and your real local config.
-**/**
-!appsscript.json
-!compass-clerk.js
-!config.js

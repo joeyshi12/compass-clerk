@@ -1,11 +1,4 @@
-# clasp / Google OAuth credentials - NEVER commit these
-.clasprc.json
-*.clasprc.json
-
-# clasp project link (contains your Script ID)
-.clasp.json
-
-# Personal config (pushed by clasp, never committed)
+# Personal config (contains your details, never committed)
 config.js
 
 # Node
